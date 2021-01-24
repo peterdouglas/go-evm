@@ -19,8 +19,8 @@ package core
 import (
 	"math/big"
 
-	"baidu.com/evm/types"
-	"baidu.com/evm/vm"
+	"github.com/duanbing/go-evm/types"
+	"github.com/duanbing/go-evm/vm"
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -55,7 +55,7 @@ func NewEVMContext(msg Message, header *types.Header, chain ChainContext, author
 		BlockNumber: new(big.Int).Set(header.Number),
 		Time:        new(big.Int).Set(header.Time),
 		Difficulty:  new(big.Int).Set(header.Difficulty),
-		GasLimit:    new(big.Int).Set(header.GasLimit),
+		GasLimit:    header.GasLimit,
 		GasPrice:    new(big.Int).Set(msg.GasPrice()),
 	}
 }

@@ -1,11 +1,12 @@
 ### Eth-VM
-This is a single golang EVM.
+This is a single golang EVM, it's based on go-ethereum release1.8
+All dependencies is maintained by `godep`.
 
-### Example
+### Run an example
 
 1. Compile contract
 ```
-cd  $GOPATH/src/baidu.com/evm/example/event
+cd  $GOPATH/src/github.com/duanbing/go-evm/example/event
 solcjs --abi --bin coin.sol
 ```
 Here we get code in xxx.bin, and abi in xx.abi
@@ -13,15 +14,15 @@ Here we get code in xxx.bin, and abi in xx.abi
 2. Run
 
 ```
-go run mainXX.go 
+godep go run main.go 
 ```
 
 ### Usage
 
-0. Prepare
+1. Prepare
 
-* build sol,  get xxx.bin and xxx.abi 
-* make an evm instance, the most important struct is StateDB. 
+* Build sol,  get xxx.bin and xxx.abi 
+* Make an evm instance, the most important struct is StateDB. 
 
 ```
 
@@ -66,34 +67,33 @@ vmConfig := vm.Config{Debug: true, Tracer: structLogger, DisableGasMetering: fal
 evm := vm.NewEVM(ctx, statedb, config, vmConfig)
 ```
 
-1. Executing a contract
+2. Executing a contract
 
-* create an contract, get the contract code
+* Create an contract, get the contract code and contractAddr,  you can get code via contractAddr in the MPT tree.
 
 ```
 contractRef := vm.AccountRef(testAddress)
-contractCode, _, gasLeftover, vmerr := evm.Create(contractRef, data, statedb.GetBalance(testAddress).Uint64(), big.NewInt(0))
+contractCode, contractAddr, gasLeftover, vmerr := evm.Create(contractRef, data, statedb.GetBalance(testAddress).Uint64(), big.NewInt(0))
 ```
 
-* encode the input ,  refer to https://solidity.readthedocs.io/en/develop/abi-spec.html#argument-encoding
+* Encode the input ,  refer to https://solidity.readthedocs.io/en/develop/abi-spec.html#argument-encoding
 ```
-method = abiObj.Methods["mint"]
-input = append(method.Id(), sender...)
-pm = abi.U256(big.NewInt(1000000))
-input = append(input, pm...)
+input, err = abiObj.Pack("send", toAddress, big.NewInt(19))
 ```
 
-* execute the evm.Call
+* Execute the evm.Call
 
 ```
 outputs, gasLeftover, vmerr = evm.Call(senderAcc, testAddress, input, statedb.GetBalance(testAddress).Uint64(), big.NewInt(0))
 ```
 
-2. Get Logs
+3. Get Logs
 
-* all logs is stored in statdb, you can call GetLogs or Logs to get all the logs
+* All logs is stored in statdb, you can call GetLogs or Logs to get all the logs
 
 ```
 logs := statedb.Logs() // logi instruction. logi store i+1 fields, the first one is stored in log.Data, and the last i field stores the parameter of logi 
 ```
+### Embedding
 
+This is the most exciting part!  if you want to combine UTXO or other ledgers tech with EVM, just implement `core/interface.go`! the MPT tree from Ethereum takes care of the smart contract, and your blockchain takes care of the transaction!

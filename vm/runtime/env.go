@@ -17,10 +17,8 @@
 package runtime
 
 import (
-	"math/big"
-
-	"baidu.com/evm/core"
-	"baidu.com/evm/vm"
+	"github.com/duanbing/go-evm/core"
+	"github.com/duanbing/go-evm/vm"
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -35,7 +33,7 @@ func NewEnv(cfg *Config) *vm.EVM {
 		BlockNumber: cfg.BlockNumber,
 		Time:        cfg.Time,
 		Difficulty:  cfg.Difficulty,
-		GasLimit:    new(big.Int).SetUint64(cfg.GasLimit),
+		GasLimit:    cfg.GasLimit,
 		GasPrice:    cfg.GasPrice,
 	}
 
